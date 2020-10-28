@@ -52,6 +52,7 @@ function decodeAttr (value, shouldDecodeNewlines) {
 }
 
 export function parseHTML (html, options) {
+  debugger
   const stack = []
   const expectHTML = options.expectHTML
   const isUnaryTag = options.isUnaryTag || no
@@ -65,6 +66,7 @@ export function parseHTML (html, options) {
       let textEnd = html.indexOf('<')
       if (textEnd === 0) {
         // Comment:
+        /*判断是不是 注释 <!--sadf--> */
         if (comment.test(html)) {
           const commentEnd = html.indexOf('-->')
 
@@ -78,6 +80,7 @@ export function parseHTML (html, options) {
         }
 
         // http://en.wikipedia.org/wiki/Conditional_comment#Downlevel-revealed_conditional_comment
+        /*<![if !IE]> 奇葩注释*/
         if (conditionalComment.test(html)) {
           const conditionalEnd = html.indexOf(']>')
 
@@ -86,7 +89,6 @@ export function parseHTML (html, options) {
             continue
           }
         }
-
         // Doctype:
         const doctypeMatch = html.match(doctype)
         if (doctypeMatch) {
@@ -104,16 +106,22 @@ export function parseHTML (html, options) {
         }
 
         // Start tag:
+        /*获取当前开始tag*/
         const startTagMatch = parseStartTag()
         if (startTagMatch) {
+          /*处理特殊tag 以及精修 attr*/
           handleStartTag(startTagMatch)
+          /*忽略 换行符 pre textarea 这两个标签才管用 准备下一次循环*/
           if (shouldIgnoreFirstNewline(startTagMatch.tagName, html)) {
             advance(1)
           }
+        debugger
           continue
         }
       }
+debugger
 
+    /*倒着处理 闭合标签*/
       let text, rest, next
       if (textEnd >= 0) {
         rest = html.slice(textEnd)
@@ -186,24 +194,36 @@ export function parseHTML (html, options) {
 
   function parseStartTag () {
     const start = html.match(startTagOpen)
+    /* <div id="app" :Data="xx"></div>*/
+    /*html匹配 头 <div */
     if (start) {
       const match = {
         tagName: start[1],
-        attrs: [],
-        start: index
+        attrs: [],/*当前tag的所有attrs 合集*/
+        start: index/*当前tag开始位置*/
       }
       advance(start[0].length)
+      /*html 光标前移*/
       let end, attr
+      /*html 匹配 attr，发现匹配到闭合就不在循环，这里同时匹配了普通attr ，和动态attr */
       while (!(end = html.match(startTagClose)) && (attr = html.match(dynamicArgAttribute) || html.match(attribute))) {
+        /*html 内 当前tag 某个attr 开始位置*/
         attr.start = index
+        /*html 光标前移 并且修改index*/
         advance(attr[0].length)
+        /*html 内 当前tag 某个attr 结位置*/
         attr.end = index
+        /*attr 压入 tag attrs内*/
         match.attrs.push(attr)
       }
+      /*当前tag 结束*/
       if (end) {
         match.unarySlash = end[1]
+        /*光标前移*/
         advance(end[0].length)
+        /*标记开始tag结束位置*/
         match.end = index
+        /*返回当前 开始tag 配置对象*/
         return match
       }
     }
@@ -237,17 +257,24 @@ export function parseHTML (html, options) {
         value: decodeAttr(value, shouldDecodeNewlines)
       }
       if (process.env.NODE_ENV !== 'production' && options.outputSourceRange) {
+        /*返回真实 字符出现位置 去掉 attr 之间的空格*/
+        /*<div id="app" as="121" ></div>*/
+        /*     ^      ^ ^      ^ */
+        /*   start  end start end */
         attrs[i].start = args.start + args[0].match(/^\s*/).length
         attrs[i].end = args.end
       }
     }
 
     if (!unary) {
+      /*缓存解析过的开始tag*/
       stack.push({ tag: tagName, lowerCasedTag: tagName.toLowerCase(), attrs: attrs, start: match.start, end: match.end })
+      /*标记上一次处理的tag名*/
       lastTag = tagName
     }
 
     if (options.start) {
+      /*当前解析开始tga处理结束，回调start*/
       options.start(tagName, attrs, unary, match.start, match.end)
     }
   }
@@ -260,6 +287,7 @@ export function parseHTML (html, options) {
     // Find the closest opened tag of the same type
     if (tagName) {
       lowerCasedTagName = tagName.toLowerCase()
+      /*倒着寻找 最先符合结束tag的 开始tag*/
       for (pos = stack.length - 1; pos >= 0; pos--) {
         if (stack[pos].lowerCasedTag === lowerCasedTagName) {
           break

@@ -42,6 +42,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
   sharedPropertyDefinition.set = function proxySetter (val) {
     this[sourceKey][key] = val
   }
+  /*data 里面的key 平铺到 vm 上*/
   Object.defineProperty(target, key, sharedPropertyDefinition)
 }
 

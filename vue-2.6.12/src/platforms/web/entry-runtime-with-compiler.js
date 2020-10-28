@@ -1,5 +1,5 @@
 /* @flow */
-
+/*运行时 带compiler 功能VUE*/
 import config from 'core/config'
 import { warn, cached } from 'core/util/index'
 import { mark, measure } from 'core/util/perf'
@@ -14,6 +14,7 @@ const idToTemplate = cached(id => {
   return el && el.innerHTML
 })
 
+/*$mount 重载 这里重载是因为 需要解析模板*/
 const mount = Vue.prototype.$mount
 Vue.prototype.$mount = function (
   el?: string | Element,
@@ -61,7 +62,8 @@ Vue.prototype.$mount = function (
       if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
         mark('compile')
       }
-
+      /*  模板解析！！！！*/
+      debugger
       const { render, staticRenderFns } = compileToFunctions(template, {
         outputSourceRange: process.env.NODE_ENV !== 'production',
         shouldDecodeNewlines,
@@ -69,6 +71,7 @@ Vue.prototype.$mount = function (
         delimiters: options.delimiters,
         comments: options.comments
       }, this)
+      /*返回的render函数和静态render*/
       options.render = render
       options.staticRenderFns = staticRenderFns
 
@@ -79,6 +82,7 @@ Vue.prototype.$mount = function (
       }
     }
   }
+  /*调用重载*/
   return mount.call(this, el, hydrating)
 }
 

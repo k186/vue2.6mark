@@ -18,7 +18,7 @@ import {
 import { patch } from './patch'
 import platformDirectives from './directives/index'
 import platformComponents from './components/index'
-
+/*运行时WEB端VUE*/
 // install platform specific utils
 Vue.config.mustUseProp = mustUseProp
 Vue.config.isReservedTag = isReservedTag
@@ -32,7 +32,6 @@ extend(Vue.options.components, platformComponents)
 
 // install platform patch function
 Vue.prototype.__patch__ = inBrowser ? patch : noop
-
 // public mount method
 Vue.prototype.$mount = function (
   el?: string | Element,

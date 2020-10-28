@@ -81,7 +81,7 @@ export function parse (
   options: CompilerOptions
 ): ASTElement | void {
   warn = options.warn || baseWarn
-
+  /*各种options 准备*/
   platformIsPreTag = options.isPreTag || no
   platformMustUseProp = options.mustUseProp || no
   platformGetTagNamespace = options.getTagNamespace || no
@@ -111,11 +111,14 @@ export function parse (
   }
 
   function closeElement (element) {
+    /*排除空白节点*/
     trimEndingWhitespace(element)
     if (!inVPre && !element.processed) {
+      /*加工element*/
       element = processElement(element, options)
     }
     // tree management
+    /*ast 树管理*/
     if (!stack.length && element !== root) {
       // allow root elements with v-if, v-else-if and v-else
       if (root.if && (element.elseif || element.else)) {
@@ -146,6 +149,7 @@ export function parse (
           const name = element.slotTarget || '"default"'
           ;(currentParent.scopedSlots || (currentParent.scopedSlots = {}))[name] = element
         }
+        /*添加子AST*/
         currentParent.children.push(element)
         element.parent = currentParent
       }
@@ -200,7 +204,7 @@ export function parse (
       )
     }
   }
-
+  /*开始转换*/
   parseHTML(template, {
     warn,
     expectHTML: options.expectHTML,
@@ -211,6 +215,7 @@ export function parse (
     shouldKeepComment: options.comments,
     outputSourceRange: options.outputSourceRange,
     start (tag, attrs, unary, start, end) {
+      debugger
       // check namespace.
       // inherit parent ns if there is one
       const ns = (currentParent && currentParent.ns) || platformGetTagNamespace(tag)
@@ -220,7 +225,7 @@ export function parse (
       if (isIE && ns === 'svg') {
         attrs = guardIESVGBug(attrs)
       }
-
+      /*通过配置 创建AST TAG 默认type类型为1 type 分好几种 */
       let element: ASTElement = createASTElement(tag, attrs, currentParent)
       if (ns) {
         element.ns = ns
@@ -230,12 +235,14 @@ export function parse (
         if (options.outputSourceRange) {
           element.start = start
           element.end = end
+          /*attrsList 转为 以name为key的map*/
           element.rawAttrsMap = element.attrsList.reduce((cumulated, attr) => {
             cumulated[attr.name] = attr
             return cumulated
           }, {})
         }
         attrs.forEach(attr => {
+          /*排除非法 attrName*/
           if (invalidAttributeRE.test(attr.name)) {
             warn(
               `Invalid dynamic argument expression: attribute names cannot contain ` +
@@ -249,6 +256,7 @@ export function parse (
         })
       }
 
+      /*再次排除 style script 标签*/
       if (isForbiddenTag(element) && !isServerRendering()) {
         element.forbidden = true
         process.env.NODE_ENV !== 'production' && warn(
@@ -263,28 +271,32 @@ export function parse (
       for (let i = 0; i < preTransforms.length; i++) {
         element = preTransforms[i](element, options) || element
       }
-
+      /*v-pre 指令解析 ，不解析 标签内容 直接跳过*/
       if (!inVPre) {
         processPre(element)
         if (element.pre) {
           inVPre = true
         }
       }
+      /*判断是否是pre tag*/
       if (platformIsPreTag(element.tag)) {
         inPre = true
       }
       if (inVPre) {
+        /*不解析attr直接渲染内容*/
         processRawAttrs(element)
       } else if (!element.processed) {
+        debugger
+        /*处理 for if once 指令*/
         // structural directives
         processFor(element)
         processIf(element)
         processOnce(element)
       }
-
       if (!root) {
         root = element
         if (process.env.NODE_ENV !== 'production') {
+          /*检查 跟节点合法性*/
           checkRootConstraints(root)
         }
       }
@@ -293,6 +305,7 @@ export function parse (
         currentParent = element
         stack.push(element)
       } else {
+        /*自闭和标签 处理完毕*/
         closeElement(element)
       }
     },
@@ -425,11 +438,12 @@ function processRawAttrs (el) {
     el.plain = true
   }
 }
-
+/*加工element*/
 export function processElement (
   element: ASTElement,
   options: CompilerOptions
 ) {
+  /*加key*/
   processKey(element)
 
   // determine whether this is a plain element after
@@ -439,10 +453,13 @@ export function processElement (
     !element.scopedSlots &&
     !element.attrsList.length
   )
-
+/*ref标记*/
   processRef(element)
+  /*slot*/
   processSlotContent(element)
+
   processSlotOutlet(element)
+
   processComponent(element)
   for (let i = 0; i < transforms.length; i++) {
     element = transforms[i](element, options) || element
@@ -489,6 +506,7 @@ function processRef (el) {
 export function processFor (el: ASTElement) {
   let exp
   if ((exp = getAndRemoveAttr(el, 'v-for'))) {
+    /*解析for 返回 {alias:'el',for:'[1,2,3]'} 这里可以处理数组或者对象*/
     const res = parseFor(exp)
     if (res) {
       extend(el, res)
@@ -509,6 +527,7 @@ type ForParseResult = {
 };
 
 export function parseFor (exp: string): ?ForParseResult {
+  /*解析 for  参数  v-for el,index in array */
   const inMatch = exp.match(forAliasRE)
   if (!inMatch) return
   const res = {}

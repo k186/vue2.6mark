@@ -12,6 +12,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   template: string,
   options: CompilerOptions
 ): CompiledResult {
+  /*parse 将HTML 转为AST*/
   const ast = parse(template.trim(), options)
   if (options.optimize !== false) {
     optimize(ast, options)

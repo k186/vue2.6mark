@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="dist/vue.js"></script>
+</head>
+<body><div v-for="el,index in [1,2,4]">
+  {{el}}
+</div>
+<!--sadf-->
+<div id="app" @click="testClick" :data="1">
+
+  <input type="text" v-model="test"/>
+</div>
+<script>
+  new Vue({
+    el: '#app',
+    data () {
+      return {
+        test: 111
+      }
+    },
+    methods: {
+      testClick () {
+
+      }
+    }
+  })
+</script>
+</body>
+</html>

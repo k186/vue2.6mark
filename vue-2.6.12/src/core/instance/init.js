@@ -80,6 +80,7 @@ export function initMixin (Vue: Class<Component>) {
     }
     /*如果节点存在挂载节点*/
     if (vm.$options.el) {
+      /*开始渲染*/
       vm.$mount(vm.$options.el)
     }
   };
