@@ -22,6 +22,6 @@ initMixin(Vue)/*挂载 _init 方法*/
 stateMixin(Vue)/*实例vm Vue.prototype 设置$data $props $set $delete $watch 这里是设置组件和实例的 响应方法？？？*/
 eventsMixin(Vue)/*实例vm Vue.prototype $on $once $off $emit*/
 lifecycleMixin(Vue)/*vm生命周期 _update $forceUpdate $destroy */
-renderMixin(Vue)/*vm $nextTice _render 挂载*/
+renderMixin(Vue)/*vm render-helpers挂载 $nextTice _render 挂载*/
 
 export default Vue

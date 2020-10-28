@@ -32,16 +32,20 @@ export function initMixin (Vue: Class<Component>) {
     // a flag to avoid this being observed
     vm._isVue = true
     // merge options
+    /*这里一层层的初始化而不是整体*/
     if (options && options._isComponent) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
       // internal component options needs special treatment.
       initInternalComponent(vm, options)
     } else {
+      /*merge 准备 当前$options,
+      *
+      *这里如果options 里面有components 如何处理？？*/
       vm.$options = mergeOptions(
-        resolveConstructorOptions(vm.constructor),
-        options || {},
-        vm
+        resolveConstructorOptions(vm.constructor),/*parent*/
+        options || {},/*child*/
+        vm/* component*/
       )
     }
     /* istanbul ignore else */
@@ -52,13 +56,20 @@ export function initMixin (Vue: Class<Component>) {
     }
     // expose real self
     vm._self = vm
+    /**/
     initLifecycle(vm)
     initEvents(vm)
     initRender(vm)
+    /*调用 beforeCreate*/
     callHook(vm, 'beforeCreate')
+    /*注入 响应式 方法*/
     initInjections(vm) // resolve injections before data/props
+
+    /*初始化状态 标准配置项 ，初始化 props  methods data computed watch */
     initState(vm)
+    /*provide*/
     initProvide(vm) // resolve provide after data/props
+    /*调用钩子函数 created*/
     callHook(vm, 'created')
 
     /* istanbul ignore if */
@@ -67,11 +78,11 @@ export function initMixin (Vue: Class<Component>) {
       mark(endTag)
       measure(`vue ${vm._name} init`, startTag, endTag)
     }
-
+    /*如果节点存在挂载节点*/
     if (vm.$options.el) {
       vm.$mount(vm.$options.el)
     }
-  }
+  };
 }
 
 export function initInternalComponent (vm: Component, options: InternalComponentOptions) {

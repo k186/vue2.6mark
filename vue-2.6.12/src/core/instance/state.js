@@ -122,6 +122,8 @@ function initData (vm: Component) {
       vm
     )
   }
+  /*上面把 data 放到_data 上，且绝对是个对象*/
+  /*把 data 代理到vm上*/
   // proxy data on instance
   const keys = Object.keys(data)
   const props = vm.$options.props
@@ -144,9 +146,11 @@ function initData (vm: Component) {
         vm
       )
     } else if (!isReserved(key)) {
+      /*设置代理逻辑 */
       proxy(vm, `_data`, key)
     }
   }
+  /*设置观察数据，并且作为根数据*/
   // observe data
   observe(data, true /* asRootData */)
 }

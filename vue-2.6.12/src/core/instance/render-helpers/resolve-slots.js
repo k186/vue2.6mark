@@ -5,6 +5,9 @@ import type VNode from 'core/vdom/vnode'
 /**
  * Runtime helper for resolving raw children VNodes into a slot object.
  */
+/*
+* 运行时将原始子Vnode 转换为 slot object
+* */
 export function resolveSlots (
   children: ?Array<VNode>,
   context: ?Component
