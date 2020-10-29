@@ -20,6 +20,7 @@ import {
   pluckModuleFunction,
   getAndRemoveAttrByRegex
 } from '../helpers'
+import { debug } from "webpack";
 
 export const onRE = /^@|^v-on:/
 export const dirRE = process.env.VBIND_PROP_SHORTHAND
@@ -114,11 +115,11 @@ export function parse (
     /*排除空白节点*/
     trimEndingWhitespace(element)
     if (!inVPre && !element.processed) {
-      /*加工element*/
+      /*加工element */
       element = processElement(element, options)
     }
     // tree management
-    /*ast 树管理*/
+    /*ast 树管理 处理 动态根节点*/
     if (!stack.length && element !== root) {
       // allow root elements with v-if, v-else-if and v-else
       if (root.if && (element.elseif || element.else)) {
@@ -215,7 +216,6 @@ export function parse (
     shouldKeepComment: options.comments,
     outputSourceRange: options.outputSourceRange,
     start (tag, attrs, unary, start, end) {
-      debugger
       // check namespace.
       // inherit parent ns if there is one
       const ns = (currentParent && currentParent.ns) || platformGetTagNamespace(tag)
@@ -286,7 +286,6 @@ export function parse (
         /*不解析attr直接渲染内容*/
         processRawAttrs(element)
       } else if (!element.processed) {
-        debugger
         /*处理 for if once 指令*/
         // structural directives
         processFor(element)
@@ -318,10 +317,13 @@ export function parse (
       if (process.env.NODE_ENV !== 'production' && options.outputSourceRange) {
         element.end = end
       }
+      /*里面的processElement 对一个标签的完整处理 attr props bind*/
       closeElement(element)
     },
 
     chars (text: string, start: number, end: number) {
+
+      /*处理节点 type 2 3  和自闭和节点？*/
       if (!currentParent) {
         if (process.env.NODE_ENV !== 'production') {
           if (text === template) {
@@ -393,6 +395,7 @@ export function parse (
       }
     },
     comment (text: string, start, end) {
+      /*处理注释*/
       // adding anything as a sibling to the root node is forbidden
       // comments should still be allowed, but ignored
       if (currentParent) {
@@ -460,6 +463,7 @@ export function processElement (
 
   processSlotOutlet(element)
 
+  /*如果当前节点是 组件，按组件流程处理*/
   processComponent(element)
   for (let i = 0; i < transforms.length; i++) {
     element = transforms[i](element, options) || element
@@ -784,6 +788,8 @@ function processAttrs (el) {
       // mark element as dynamic
       el.hasBindings = true
       // modifiers
+      /*获取表达式修饰符*/
+      /*:data.修饰符*/
       modifiers = parseModifiers(name.replace(dirRE, ''))
       // support .foo shorthand syntax for the .prop modifier
       if (process.env.VBIND_PROP_SHORTHAND && propBindRE.test(name)) {
@@ -792,9 +798,12 @@ function processAttrs (el) {
       } else if (modifiers) {
         name = name.replace(modifierRE, '')
       }
-      if (bindRE.test(name)) { // v-bind
+      if (bindRE.test(name)) {// v-bind
+        //获取v-bind\:data 这种表达式  名称
         name = name.replace(bindRE, '')
+        //值
         value = parseFilters(value)
+        //是否是动态值
         isDynamic = dynamicArgRE.test(name)
         if (isDynamic) {
           name = name.slice(1, -1)
@@ -807,7 +816,9 @@ function processAttrs (el) {
             `The value for a v-bind expression cannot be empty. Found in "v-bind:${name}"`
           )
         }
+        /*v-bind 存在修饰符*/
         if (modifiers) {
+          /*vue v-bind 默认支持如下修饰符 https://cn.vuejs.org/v2/api/#v-bind*/
           if (modifiers.prop && !isDynamic) {
             name = camelize(name)
             if (name === 'innerHtml') name = 'innerHTML'
@@ -856,8 +867,13 @@ function processAttrs (el) {
         if ((modifiers && modifiers.prop) || (
           !el.component && platformMustUseProp(el.tag, el.attrsMap.type, name)
         )) {
+          /*作为dom 的property 而非一个 attr*/
+          /*https://stackoverflow.com/questions/6003819/what-is-the-difference-between-properties-and-attributes-in-html#answer-6004028*/
+          /*props*/
+          debugger
           addProp(el, name, value, list[i], isDynamic)
         } else {
+          /*静态 没有表达修饰符 直接添加为attr*/
           addAttr(el, name, value, list[i], isDynamic)
         }
       } else if (onRE.test(name)) { // v-on
@@ -866,10 +882,16 @@ function processAttrs (el) {
         if (isDynamic) {
           name = name.slice(1, -1)
         }
+      /*绑定事件*/
+        /*
+        * el.events:{ 事件包裹对象}
+        * */
         addHandler(el, name, value, modifiers, false, warn, list[i], isDynamic)
       } else { // normal directives
+        /*处理指令*/
         name = name.replace(dirRE, '')
         // parse arg
+        /*解析指令 获取准确的指令名称 和参数 指令结构 v-名字.参数 也有可能 v-名字:参数*/
         const argMatch = name.match(argRE)
         let arg = argMatch && argMatch[1]
         isDynamic = false
@@ -880,13 +902,17 @@ function processAttrs (el) {
             isDynamic = true
           }
         }
+        /*挂载 对应指令结构到el的directives上*/
         addDirective(el, name, rawName, value, arg, isDynamic, modifiers, list[i])
+        /*特殊处理model 指令*/
         if (process.env.NODE_ENV !== 'production' && name === 'model') {
+          /*<input v-for="el in [1,2,4]" v-model="el"/> 非法*/
           checkForAliasModel(el, value)
         }
       }
     } else {
       // literal attribute
+      /*字面属性 */
       if (process.env.NODE_ENV !== 'production') {
         const res = parseText(value, delimiters)
         if (res) {

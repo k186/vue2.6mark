@@ -5,13 +5,12 @@
   <title>Title</title>
   <script src="dist/vue.js"></script>
 </head>
-<body><div v-for="el,index in [1,2,4]">
-  {{el}}
-</div>
+<body>
 <!--sadf-->
-<div id="app" @click="testClick" :data="1">
-
+<div id="app" :data="true" @click="testClick">
   <input type="text" v-model="test"/>
+  <img/>
+  <textarea type="text" v-model="test"></textarea>
 </div>
 <script>
   new Vue({

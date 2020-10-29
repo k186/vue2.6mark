@@ -68,6 +68,7 @@ function markStatic (node: ASTNode) {
 }
 
 function markStaticRoots (node: ASTNode, isInFor: boolean) {
+  /*只处理 标签节点*/
   if (node.type === 1) {
     if (node.static || node.once) {
       node.staticInFor = isInFor

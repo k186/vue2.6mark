@@ -52,7 +52,6 @@ function decodeAttr (value, shouldDecodeNewlines) {
 }
 
 export function parseHTML (html, options) {
-  debugger
   const stack = []
   const expectHTML = options.expectHTML
   const isUnaryTag = options.isUnaryTag || no
@@ -115,11 +114,9 @@ export function parseHTML (html, options) {
           if (shouldIgnoreFirstNewline(startTagMatch.tagName, html)) {
             advance(1)
           }
-        debugger
           continue
         }
       }
-debugger
 
     /*倒着处理 闭合标签*/
       let text, rest, next
@@ -287,7 +284,7 @@ debugger
     // Find the closest opened tag of the same type
     if (tagName) {
       lowerCasedTagName = tagName.toLowerCase()
-      /*倒着寻找 最先符合结束tag的 开始tag*/
+      /*倒着寻找 最先符合结束tag的 开始tag stack 里面只会有 那种 需要闭合的标签 不会有自闭和标签*/
       for (pos = stack.length - 1; pos >= 0; pos--) {
         if (stack[pos].lowerCasedTag === lowerCasedTagName) {
           break

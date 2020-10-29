@@ -44,8 +44,19 @@ export function generate (
   ast: ASTElement | void,
   options: CompilerOptions
 ): CodegenResult {
+  debugger
+  /*state 包含 默认 全局 directives [bind cloak html model on text ]*/
   const state = new CodegenState(options)
+  /* _c  createElement 方法 ；在 core/instance render initRender 时候初始化定义*/
   const code = ast ? genElement(ast, state) : '_c("div")'
+  /* with 语句的作用*/
+  /*
+  * with (expression) {
+    statement;
+  }
+  *
+  *  讲statement的作用域添加到expression中
+  * */
   return {
     render: `with(this){return ${code}}`,
     staticRenderFns: state.staticRenderFns
@@ -56,18 +67,23 @@ export function genElement (el: ASTElement, state: CodegenState): string {
   if (el.parent) {
     el.pre = el.pre || el.parent.pre
   }
-
+  /*根据语法标记 生成对应的渲染code*/
   if (el.staticRoot && !el.staticProcessed) {
+    /*纯静态渲染 */
     return genStatic(el, state)
   } else if (el.once && !el.onceProcessed) {
     return genOnce(el, state)
   } else if (el.for && !el.forProcessed) {
+    /*v-for 指令解析*/
     return genFor(el, state)
   } else if (el.if && !el.ifProcessed) {
+    /*v-if 指令解析*/
     return genIf(el, state)
   } else if (el.tag === 'template' && !el.slotTarget && !state.pre) {
+    /*template tag 解析*/
     return genChildren(el, state) || 'void 0'
   } else if (el.tag === 'slot') {
+    /*slot 解析*/
     return genSlot(el, state)
   } else {
     // component or element
@@ -212,7 +228,7 @@ export function genFor (
   el.forProcessed = true // avoid recursion
   return `${altHelper || '_l'}((${exp}),` +
     `function(${alias}${iterator1}${iterator2}){` +
-      `return ${(altGen || genElement)(el, state)}` +
+    `return ${(altGen || genElement)(el, state)}` +
     '})'
 }
 
@@ -344,7 +360,7 @@ function genInlineTemplate (el: ASTElement, state: CodegenState): ?string {
   )) {
     state.warn(
       'Inline-template components must have exactly one child element.',
-      { start: el.start }
+      {start: el.start}
     )
   }
   if (ast && ast.type === 1) {
@@ -404,9 +420,7 @@ function genScopedSlots (
     }
   }
 
-  const generatedSlots = Object.keys(slots)
-    .map(key => genScopedSlot(slots[key], state))
-    .join(',')
+  const generatedSlots = Object.keys(slots).map(key => genScopedSlot(slots[key], state)).join(',')
 
   return `scopedSlots:_u([${generatedSlots}]${
     needsForceUpdate ? `,null,true` : ``
@@ -415,10 +429,10 @@ function genScopedSlots (
   })`
 }
 
-function hash(str) {
+function hash (str) {
   let hash = 5381
   let i = str.length
-  while(i) {
+  while (i) {
     hash = (hash * 33) ^ str.charCodeAt(--i)
   }
   return hash >>> 0
@@ -506,12 +520,12 @@ function getNormalizationType (
       continue
     }
     if (needsNormalization(el) ||
-        (el.ifConditions && el.ifConditions.some(c => needsNormalization(c.block)))) {
+      (el.ifConditions && el.ifConditions.some(c => needsNormalization(c.block)))) {
       res = 2
       break
     }
     if (maybeComponent(el) ||
-        (el.ifConditions && el.ifConditions.some(c => maybeComponent(c.block)))) {
+      (el.ifConditions && el.ifConditions.some(c => maybeComponent(c.block)))) {
       res = 1
     }
   }
@@ -549,11 +563,11 @@ function genSlot (el: ASTElement, state: CodegenState): string {
   let res = `_t(${slotName}${children ? `,${children}` : ''}`
   const attrs = el.attrs || el.dynamicAttrs
     ? genProps((el.attrs || []).concat(el.dynamicAttrs || []).map(attr => ({
-        // slot props are camelized
-        name: camelize(attr.name),
-        value: attr.value,
-        dynamic: attr.dynamic
-      })))
+      // slot props are camelized
+      name: camelize(attr.name),
+      value: attr.value,
+      dynamic: attr.dynamic
+    })))
     : null
   const bind = el.attrsMap['v-bind']
   if ((attrs || bind) && !children) {
@@ -612,7 +626,5 @@ function generateValue (value) {
 
 // #3895, #4268
 function transformSpecialNewlines (text: string): string {
-  return text
-    .replace(/\u2028/g, '\\u2028')
-    .replace(/\u2029/g, '\\u2029')
+  return text.replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')
 }
