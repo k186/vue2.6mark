@@ -44,10 +44,9 @@ export function generate (
   ast: ASTElement | void,
   options: CompilerOptions
 ): CodegenResult {
-  debugger
   /*state 包含 默认 全局 directives [bind cloak html model on text ]*/
   const state = new CodegenState(options)
-  /* _c  createElement 方法 ；在 core/instance render initRender 时候初始化定义*/
+  /* _c -> createElement 方法 ；在 core/instance render initRender 时候初始化定义*/
   const code = ast ? genElement(ast, state) : '_c("div")'
   /* with 语句的作用*/
   /*
@@ -55,7 +54,7 @@ export function generate (
     statement;
   }
   *
-  *  讲statement的作用域添加到expression中
+  *  将statement的作用域添加到expression中
   * */
   return {
     render: `with(this){return ${code}}`,
@@ -69,9 +68,10 @@ export function genElement (el: ASTElement, state: CodegenState): string {
   }
   /*根据语法标记 生成对应的渲染code*/
   if (el.staticRoot && !el.staticProcessed) {
-    /*纯静态渲染 */
+    /*标记 v-pre节点 */
     return genStatic(el, state)
   } else if (el.once && !el.onceProcessed) {
+    /*v-once*/
     return genOnce(el, state)
   } else if (el.for && !el.forProcessed) {
     /*v-for 指令解析*/
@@ -88,6 +88,7 @@ export function genElement (el: ASTElement, state: CodegenState): string {
   } else {
     // component or element
     let code
+    /*如果是个组件 走组件的逻辑*/
     if (el.component) {
       code = genComponent(el.component, el, state)
     } else {
@@ -96,6 +97,7 @@ export function genElement (el: ASTElement, state: CodegenState): string {
         data = genData(el, state)
       }
 
+      //递归创建 child
       const children = el.inlineTemplate ? null : genChildren(el, state, true)
       code = `_c('${el.tag}'${
         data ? `,${data}` : '' // data

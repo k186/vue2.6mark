@@ -41,9 +41,12 @@ export class Observer {
 
   constructor (value: any) {
     this.value = value
+    /*依赖收集器*/
     this.dep = new Dep()
     this.vmCount = 0
+    /*定义 __ob__ 表示双向*/
     def(value, '__ob__', this)
+    /*处理数组*/
     if (Array.isArray(value)) {
       if (hasProto) {
         protoAugment(value, arrayMethods)
@@ -52,6 +55,7 @@ export class Observer {
       }
       this.observeArray(value)
     } else {
+      /*正常处理对象*/
       this.walk(value)
     }
   }
@@ -64,6 +68,7 @@ export class Observer {
   walk (obj: Object) {
     const keys = Object.keys(obj)
     for (let i = 0; i < keys.length; i++) {
+      /*定义响应式*/
       defineReactive(obj, keys[i])
     }
   }
@@ -123,6 +128,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
     Object.isExtensible(value) &&
     !value._isVue
   ) {
+    /*新建 Ob*/
     ob = new Observer(value)
   }
   if (asRootData && ob) {
@@ -160,7 +166,10 @@ export function defineReactive (
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
+      /*get 值优先取 默认getter
+      * */
       const value = getter ? getter.call(obj) : val
+      /*依赖收集*/
       if (Dep.target) {
         dep.depend()
         if (childOb) {
@@ -173,12 +182,14 @@ export function defineReactive (
       return value
     },
     set: function reactiveSetter (newVal) {
+      /*先取默认值*/
       const value = getter ? getter.call(obj) : val
       /* eslint-disable no-self-compare */
       if (newVal === value || (newVal !== newVal && value !== value)) {
         return
       }
       /* eslint-enable no-self-compare */
+      /*取用户自定义setter*/
       if (process.env.NODE_ENV !== 'production' && customSetter) {
         customSetter()
       }
@@ -189,7 +200,9 @@ export function defineReactive (
       } else {
         val = newVal
       }
+      /*如果新值是一个对象 就继续ob*/
       childOb = !shallow && observe(newVal)
+      /*广播*/
       dep.notify()
     }
   })

@@ -47,11 +47,13 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 }
 
 export function initState (vm: Component) {
+  debugger
   vm._watchers = []
   const opts = vm.$options
   if (opts.props) initProps(vm, opts.props)
   if (opts.methods) initMethods(vm, opts.methods)
   if (opts.data) {
+    /*收集data ob*/
     initData(vm)
   } else {
     observe(vm._data = {}, true /* asRootData */)
@@ -130,6 +132,7 @@ function initData (vm: Component) {
   const props = vm.$options.props
   const methods = vm.$options.methods
   let i = keys.length
+  /*方法不能和data key 重名*/
   while (i--) {
     const key = keys[i]
     if (process.env.NODE_ENV !== 'production') {
@@ -147,7 +150,10 @@ function initData (vm: Component) {
         vm
       )
     } else if (!isReserved(key)) {
-      /*设置代理逻辑 */
+      /*设置代理逻辑
+      * 把 data key 代理到 _data 上
+      * 用户操作 this.data.key 实际是操作_data
+      * */
       proxy(vm, `_data`, key)
     }
   }

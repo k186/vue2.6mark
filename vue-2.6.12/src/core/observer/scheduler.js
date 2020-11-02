@@ -69,6 +69,7 @@ if (inBrowser && !isIE) {
  * Flush both queues and run the watchers.
  */
 function flushSchedulerQueue () {
+  debugger
   currentFlushTimestamp = getNow()
   flushing = true
   let watcher, id
@@ -92,6 +93,7 @@ function flushSchedulerQueue () {
     }
     id = watcher.id
     has[id] = null
+    /*调用watcher run*/
     watcher.run()
     // in dev build, check and stop circular updates.
     if (process.env.NODE_ENV !== 'production' && has[id] != null) {
@@ -162,6 +164,7 @@ function callActivatedHooks (queue) {
  * pushed when the queue is being flushed.
  */
 export function queueWatcher (watcher: Watcher) {
+  /*每一个watcher 都是一个vue 组件？？？*/
   const id = watcher.id
   if (has[id] == null) {
     has[id] = true

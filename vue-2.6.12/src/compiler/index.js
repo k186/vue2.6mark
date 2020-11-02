@@ -14,7 +14,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
 ): CompiledResult {
   /*parse 将HTML 转为AST*/
   const ast = parse(template.trim(), options)
-  debugger
+
   if (options.optimize !== false) {
     /*优化 标记静态节点 默认 type 2 false type 3 true
     * 细节判断逻辑

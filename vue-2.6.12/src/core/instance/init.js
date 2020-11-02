@@ -80,7 +80,9 @@ export function initMixin (Vue: Class<Component>) {
     }
     /*如果节点存在挂载节点*/
     if (vm.$options.el) {
-      /*开始渲染*/
+      /*开始渲染 这里有区别，如果是带有compiler 的会被 entry-runtime-with-compiler js 给mixin 先走
+      * template -> ast -> render ->vnode 再到 lifecycle 里面的mountComponent
+      * */
       vm.$mount(vm.$options.el)
     }
   };

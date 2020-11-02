@@ -103,6 +103,7 @@ export default class Watcher {
     let value
     const vm = this.vm
     try {
+      /*触发更新 开始渲染*/
       value = this.getter.call(vm, vm)
     } catch (e) {
       if (this.user) {
@@ -163,6 +164,7 @@ export default class Watcher {
    */
   update () {
     /* istanbul ignore else */
+    /*ob 更新触发这里*/
     if (this.lazy) {
       this.dirty = true
     } else if (this.sync) {
@@ -178,6 +180,7 @@ export default class Watcher {
    */
   run () {
     if (this.active) {
+      /*调用watcher get*/
       const value = this.get()
       if (
         value !== this.value ||

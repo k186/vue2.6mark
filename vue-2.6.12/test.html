@@ -7,10 +7,9 @@
 </head>
 <body>
 <!--sadf-->
-<div id="app" :data="true" @click="testClick">
+<div id="app" :data="true" >
   <input type="text" v-model="test"/>
-  <img/>
-  <textarea type="text" v-model="test"></textarea>
+  <div @click="testClick">按钮</div>
 </div>
 <script>
   new Vue({
@@ -20,9 +19,12 @@
         test: 111
       }
     },
+    beforeUpdate(){
+      debugger
+    },
     methods: {
       testClick () {
-
+        this.test=123
       }
     }
   })

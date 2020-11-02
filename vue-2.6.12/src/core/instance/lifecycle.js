@@ -66,9 +66,11 @@ export function lifecycleMixin (Vue: Class<Component>) {
     // based on the rendering backend used.
     if (!prevVnode) {
       // initial render
+      /*首次渲染*/
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
     } else {
       // updates
+      /*二次更新*/
       vm.$el = vm.__patch__(prevVnode, vnode)
     }
     restoreActiveInstance()
@@ -138,6 +140,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
   }
 }
 
+/*这个在 runtime/index 里被挂载到$mount； 在instance/index 里面的init 被触发调用$mount*/
 export function mountComponent (
   vm: Component,
   el: ?Element,
@@ -167,6 +170,7 @@ export function mountComponent (
   callHook(vm, 'beforeMount')
 
   let updateComponent
+
   /* istanbul ignore if */
   if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
     updateComponent = () => {
@@ -186,7 +190,13 @@ export function mountComponent (
       measure(`vue ${name} patch`, startTag, endTag)
     }
   } else {
+    /*开始触发渲染 Vnode 的update*/
+    /*这个方法是 watcher的getter*/
     updateComponent = () => {
+      /*被 observer/watcher/get()触发首次渲染
+      * _update 方法在 core/instance/index lifecycleMixin 中注入
+      *
+      * */
       vm._update(vm._render(), hydrating)
     }
   }
@@ -194,6 +204,8 @@ export function mountComponent (
   // we set this to vm._watcher inside the watcher's constructor
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
+ /* 监听当前 component； mix beforeUpdate方法 ;这个water 用于$watch 还有 指令*/
+
   new Watcher(vm, updateComponent, noop, {
     before () {
       if (vm._isMounted && !vm._isDestroyed) {
