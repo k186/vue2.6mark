@@ -195,7 +195,7 @@ export function mountComponent (
     updateComponent = () => {
       /*被 observer/watcher/get()触发首次渲染
       * _update 方法在 core/instance/index lifecycleMixin 中注入
-      *
+      * _render() 返回的是Vnode
       * */
       vm._update(vm._render(), hydrating)
     }

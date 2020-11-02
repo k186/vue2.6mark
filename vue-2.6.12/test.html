@@ -12,12 +12,11 @@
   <div @click="testClick">按钮</div>
 </div>
 <script>
+
   new Vue({
     el: '#app',
-    data () {
-      return {
-        test: 111
-      }
+    data :{
+      test: 111
     },
     beforeUpdate(){
       debugger

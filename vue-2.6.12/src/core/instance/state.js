@@ -164,6 +164,7 @@ function initData (vm: Component) {
 
 export function getData (data: Function, vm: Component): any {
   // #7573 disable dep collection when invoking data getters
+  /*依赖收集的target*/
   pushTarget()
   try {
     return data.call(vm, vm)
