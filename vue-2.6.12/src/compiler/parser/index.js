@@ -332,7 +332,6 @@ export function parse (
     },
 
     chars (text: string, start: number, end: number) {
-
       /*处理节点 type 2 3  和自闭和节点？*/
       if (!currentParent) {
         if (process.env.NODE_ENV !== 'production') {
@@ -382,6 +381,7 @@ export function parse (
         }
         let res
         let child: ?ASTNode
+                                               /* 如果有filter 在这里解析 code 在expression里面 */
         if (!inVPre && text !== ' ' && (res = parseText(text, delimiters))) {
           child = {
             type: 2,
@@ -820,6 +820,8 @@ function processAttrs (el) {
         //获取v-bind\:data 这种表达式  名称
         name = name.replace(bindRE, '')
         //值
+        debugger
+
         value = parseFilters(value)
         //是否是动态值
         isDynamic = dynamicArgRE.test(name)

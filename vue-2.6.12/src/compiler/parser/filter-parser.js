@@ -12,7 +12,6 @@ export function parseFilters (exp: string): string {
   let paren = 0
   let lastFilterIndex = 0
   let c, prev, i, expression, filters
-
   for (i = 0; i < exp.length; i++) {
     prev = c
     c = exp.charCodeAt(i)
@@ -74,7 +73,6 @@ export function parseFilters (exp: string): string {
     (filters || (filters = [])).push(exp.slice(lastFilterIndex, i).trim())
     lastFilterIndex = i + 1
   }
-
   if (filters) {
     for (i = 0; i < filters.length; i++) {
       expression = wrapFilter(expression, filters[i])

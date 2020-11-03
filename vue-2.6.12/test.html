@@ -14,7 +14,8 @@
 <!--  <div @click="()=>{testIf+=1}">changeTestIf</div>-->
 <!--  <div v-show="testShow">TESTSHOW</div>-->
   <!--<div @click="()=>{testShow=!testShow}">changeTestShow</div>-->
-  <div @click.once="testClick">changeTestShow</div>
+  <!--<div @click.once="testClick">changeTestShow</div>-->
+  <div>{{test|abc|abc1}}</div>
   <!--with 语句 牛P-->
   <!--"_c('div',{on:{"click":testClick}},[_v("changeTestShow")])"-->
 <!--    <div v-abc="testShow">TESTSHOW</div>-->
@@ -43,6 +44,16 @@
 
   new Vue({
     el: '#app',
+    filters:{
+      'abc':(abc)=>{
+        console.log(111)
+        return 111
+      },
+      'abc1':(abc)=>{
+        console.log(222)
+        return 22
+      }
+    },
     data :{
       testIf: true,
       testShow: true,
