@@ -72,7 +72,12 @@ export function createPatchFunction (backend) {
   const cbs = {}
 
   const { modules, nodeOps } = backend
-
+  /* hooks 生命周期  对应生命周期绑定 modules 对应方法
+  * 不同 runtime 的modules 有区别 web端是在 platforms/web/runtime/patch concat 上的
+  * baseModules 来自 core/vdom/modules/index
+  * baseModules 只包含 指令解析和 ref
+  * web runtime 新增 platforms/web/runtime/modules 函数珂里化结果
+  * */
   for (i = 0; i < hooks.length; ++i) {
     cbs[hooks[i]] = []
     for (j = 0; j < modules.length; ++j) {
@@ -131,6 +136,7 @@ export function createPatchFunction (backend) {
     ownerArray,
     index
   ) {
+    debugger
     if (isDef(vnode.elm) && isDef(ownerArray)) {
       // This vnode was used in a previous render!
       // now it's used as a new node, overwriting its elm would cause
@@ -141,18 +147,22 @@ export function createPatchFunction (backend) {
     }
 
     vnode.isRootInsert = !nested // for transition enter check
+    /*如果节点是 组件 直接创建完返回 */
     if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
       return
     }
+    /* 继续创建节点*/
 
-    const data = vnode.data
-    const children = vnode.children
-    const tag = vnode.tag
+    const data = vnode.data /*节点数据*/
+    const children = vnode.children /*子节点*/
+    const tag = vnode.tag /*节点名称*/
     if (isDef(tag)) {
       if (process.env.NODE_ENV !== 'production') {
+        /*pre 节点*/
         if (data && data.pre) {
           creatingElmInVPre++
         }
+        /*未知节点标记 */
         if (isUnknownElement(vnode, creatingElmInVPre)) {
           warn(
             'Unknown custom element: <' + tag + '> - did you ' +
@@ -164,9 +174,9 @@ export function createPatchFunction (backend) {
       }
 
       vnode.elm = vnode.ns
-        ? nodeOps.createElementNS(vnode.ns, tag)
+        ? nodeOps.createElementNS(vnode.ns, tag)/*带命名空间的element*/
         : nodeOps.createElement(tag, vnode)
-      setScope(vnode)
+      setScope(vnode)/*css scoped*/
 
       /* istanbul ignore if */
       if (__WEEX__) {
@@ -188,10 +198,14 @@ export function createPatchFunction (backend) {
           insert(parentElm, vnode.elm, refElm)
         }
       } else {
+        /*向下创建 子节点*/
         createChildren(vnode, children, insertedVnodeQueue)
+        debugger
         if (isDef(data)) {
+          /*调用 创建 patch 时 缓存的 vdom/modules/index 的hook */
           invokeCreateHooks(vnode, insertedVnodeQueue)
         }
+      /*节点插入 组合*/
         insert(parentElm, vnode.elm, refElm)
       }
 
@@ -302,6 +316,10 @@ export function createPatchFunction (backend) {
   }
 
   function invokeCreateHooks (vnode, insertedVnodeQueue) {
+    /*cbs 基础生命周期回调
+    * activate create destroy remove update
+    *
+    * */
     for (let i = 0; i < cbs.create.length; ++i) {
       cbs.create[i](emptyNode, vnode)
     }
@@ -697,7 +715,9 @@ export function createPatchFunction (backend) {
     }
   }
 
+  /*真正的patch 方法 这里又是 函数珂里*/
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
+    debugger
     if (isUndef(vnode)) {
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
       return
@@ -748,6 +768,18 @@ export function createPatchFunction (backend) {
         const parentElm = nodeOps.parentNode(oldElm)
 
         // create new node
+        /*
+        *   vnode,
+        *   insertedVnodeQueue,
+        *   parentElm,
+        *   refElm,
+        *   nested,
+        *   ownerArray,
+        *   index
+        * */
+        /*
+        * 这里面会去创建el 同时会处理指令 module等相关的绑定关系
+        * */
         createElm(
           vnode,
           insertedVnodeQueue,
@@ -797,6 +829,7 @@ export function createPatchFunction (backend) {
       }
     }
 
+    /*触发 insert hook */
     invokeInsertHook(vnode, insertedVnodeQueue, isInitialPatch)
     return vnode.elm
   }

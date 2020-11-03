@@ -28,6 +28,7 @@ export function initRender (vm: Component) {
   // so that we get proper render context inside it.
   // args order: tag, data, children, normalizationType, alwaysNormalize
   // internal version is used by render functions compiled from templates
+  /*柯里化 函数 传入vm 返回 新函数*/
   vm._c = (a, b, c, d) => createElement(vm, a, b, c, d, false)
   // normalization is always applied for the public version, used in
   // user-written render functions.
@@ -91,7 +92,6 @@ export function renderMixin (Vue: Class<Component>) {
       // when parent component is patched.
       currentRenderingInstance = vm
       /*触发真实渲染 调用render 方法 并且传入 createElement 方法 _renderProxy 设置 this 指向为vm*/
-
       vnode = render.call(vm._renderProxy, vm.$createElement)
     } catch (e) {
       handleError(e, vm, `render`)

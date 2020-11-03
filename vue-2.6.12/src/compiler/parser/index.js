@@ -122,6 +122,7 @@ export function parse (
     /*ast 树管理 处理 动态根节点*/
     if (!stack.length && element !== root) {
       // allow root elements with v-if, v-else-if and v-else
+      /*处理根节点的 v-if 集中情况 要把 else的 el 加入到 if 的condition内*/
       if (root.if && (element.elseif || element.else)) {
         if (process.env.NODE_ENV !== 'production') {
           checkRootConstraints(element)
@@ -140,7 +141,13 @@ export function parse (
       }
     }
     if (currentParent && !element.forbidden) {
+      /*处理普通节点 的 else 情况
+      *
+      * */
       if (element.elseif || element.else) {
+        /*
+        * 这里要去查找同层的前一个节点 然后把自己加入到前一个节点的condition
+        * */
         processIfConditions(element, currentParent)
       } else {
         if (element.slotScope) {
@@ -286,7 +293,10 @@ export function parse (
         /*不解析attr直接渲染内容*/
         processRawAttrs(element)
       } else if (!element.processed) {
-        /*处理 for if once 指令*/
+        /*处理 for if once
+        * 将attr 转换为 各自的表达式
+        *
+        * */
         // structural directives
         processFor(element)
         processIf(element)
@@ -551,9 +561,11 @@ export function parseFor (exp: string): ?ForParseResult {
 }
 
 function processIf (el) {
+  /*if 判断*/
   const exp = getAndRemoveAttr(el, 'v-if')
   if (exp) {
     el.if = exp
+    /*添加到 if 状态 对象内， 表达式 和对应的el AST 节点 */
     addIfCondition(el, {
       exp: exp,
       block: el
@@ -570,7 +582,13 @@ function processIf (el) {
 }
 
 function processIfConditions (el, parent) {
+  /*
+  * 查找父级节点children 内 倒数第一个 标签节点 nodeType==1
+  * */
   const prev = findPrevElement(parent.children)
+  /**
+   * 确认上一个节点是v-if 节点
+   * */
   if (prev && prev.if) {
     addIfCondition(prev, {
       exp: el.elseif,
@@ -870,7 +888,6 @@ function processAttrs (el) {
           /*作为dom 的property 而非一个 attr*/
           /*https://stackoverflow.com/questions/6003819/what-is-the-difference-between-properties-and-attributes-in-html#answer-6004028*/
           /*props*/
-          debugger
           addProp(el, name, value, list[i], isDynamic)
         } else {
           /*静态 没有表达修饰符 直接添加为attr*/

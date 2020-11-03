@@ -7,19 +7,44 @@
 </head>
 <body>
 <!--sadf-->
-<div id="app" :data="true" >
-  <input type="text" v-model="test"/>
-  <div @click="testClick">按钮</div>
+<div id="app" >
+<!--  <div v-if="testIf==1">ifText</div>-->
+<!--  <div v-else-if="testIf==2">elseIfText</div>-->
+<!--  <div v-else="">elseText</div>-->
+<!--  <div @click="()=>{testIf+=1}">changeTestIf</div>-->
+<!--  <div v-show="testShow">TESTSHOW</div>-->
+  <div @click="()=>{testShow=!testShow}">changeTestShow</div>
+    <div v-abc="testShow">TESTSHOW</div>
+  <!-- _c('div',{directives:[{name:"abc",rawName:"v-abc",value:(testShow),expression:"testShow"}]},[_v("TESTSHOW")]) -->
+
+<!--  <div v-for="el,$index in [1,2,3,4]">{{el}}</div>-->
 </div>
 <script>
+  Vue.directive('abc',{
+    bind: function () {
+      console.log(1)
+    },
+    inserted: function () {
+      console.log(2)
+    },
+    update: function () {
+      console.log(3)
+    },
+    componentUpdated: function () {
+      console.log(4)
+    },
+    unbind: function () {
+      console.log(5)
+    }
+  })
 
   new Vue({
     el: '#app',
     data :{
-      test: 111
+      testIf: true,
+      testShow: true
     },
     beforeUpdate(){
-      debugger
     },
     methods: {
       testClick () {

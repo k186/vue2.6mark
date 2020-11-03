@@ -94,6 +94,26 @@ export function genElement (el: ASTElement, state: CodegenState): string {
     } else {
       let data
       if (!el.plain || (el.pre && state.maybeComponent(el))) {
+        /*解析attr ，有些是vue 特有的
+        * 优先解析指令
+        * key
+        * ref
+        * refInFor
+        * pre
+        * component
+        * attrs
+        * props
+        * events
+        * nativeEvents
+        * slotTarget
+        * scopedSlots
+        * model
+        * inlineTemplate
+        * dynamicAttrs
+        * wrapData
+        * wrapListeners
+        * */
+        debugger
         data = genData(el, state)
       }
 
@@ -180,11 +200,14 @@ function genIfConditions (
     return altEmpty || '_e()'
   }
 
+  /*这里要把  conditions 处理为空为止*/
   const condition = conditions.shift()
+  /* 用三目运算符 返回*/
   if (condition.exp) {
     return `(${condition.exp})?${
       genTernaryExp(condition.block)
     }:${
+      /*继续处理 else 返回复杂三目运算*/
       genIfConditions(conditions, state, altGen, altEmpty)
     }`
   } else {

@@ -97,6 +97,7 @@ export function _createElement (
     let Ctor
     ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)
     if (config.isReservedTag(tag)) {
+      /*创建普通节点*/
       // platform built-in elements
       if (process.env.NODE_ENV !== 'production' && isDef(data) && isDef(data.nativeOn)) {
         warn(
@@ -104,6 +105,7 @@ export function _createElement (
           context
         )
       }
+      /*普通节点Vnode*/
       vnode = new VNode(
         config.parsePlatformTagName(tag), data, children,
         undefined, undefined, context
@@ -122,13 +124,14 @@ export function _createElement (
     }
   } else {
     // direct component options / constructor
+    /* 创建组件Vnode*/
     vnode = createComponent(tag, data, context, children)
   }
   if (Array.isArray(vnode)) {
     return vnode
   } else if (isDef(vnode)) {
     if (isDef(ns)) applyNS(vnode, ns)
-    if (isDef(data)) registerDeepBindings(data)
+    if (isDef(data)) registerDeepBindings(data)/*绑定 style 和 class*/
     return vnode
   } else {
     return createEmptyVNode()

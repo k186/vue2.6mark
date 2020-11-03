@@ -19,6 +19,15 @@ function updateDirectives (oldVnode: VNodeWithData, vnode: VNodeWithData) {
 }
 
 function _update (oldVnode, vnode) {
+  /*
+  * 这里处理 所有指令的钩子函数
+  * bind
+  * inserted
+  * update
+  * componentUpdated
+  * unbind
+  * https://cn.vuejs.org/v2/guide/custom-directive.html
+  * */
   const isCreate = oldVnode === emptyNode
   const isDestroy = vnode === emptyNode
   const oldDirs = normalizeDirectives(oldVnode.data.directives, oldVnode.context)
@@ -33,6 +42,7 @@ function _update (oldVnode, vnode) {
     dir = newDirs[key]
     if (!oldDir) {
       // new directive, bind
+      /*指令 bind 调用*/
       callHook(dir, 'bind', vnode, oldVnode)
       if (dir.def && dir.def.inserted) {
         dirsWithInsert.push(dir)
@@ -41,13 +51,13 @@ function _update (oldVnode, vnode) {
       // existing directive, update
       dir.oldValue = oldDir.value
       dir.oldArg = oldDir.arg
+      /*指令 update 调用*/
       callHook(dir, 'update', vnode, oldVnode)
       if (dir.def && dir.def.componentUpdated) {
         dirsWithPostpatch.push(dir)
       }
     }
   }
-
   if (dirsWithInsert.length) {
     const callInsert = () => {
       for (let i = 0; i < dirsWithInsert.length; i++) {
@@ -61,6 +71,7 @@ function _update (oldVnode, vnode) {
     }
   }
 
+  /*子节点更新完调用*/
   if (dirsWithPostpatch.length) {
     mergeVNodeHook(vnode, 'postpatch', () => {
       for (let i = 0; i < dirsWithPostpatch.length; i++) {

@@ -168,7 +168,6 @@ export function defineReactive (
     get: function reactiveGetter () {
       /*get 值优先取 默认getter
       * */
-      debugger
       const value = getter ? getter.call(obj) : val
       /*依赖收集*/
       if (Dep.target) {
@@ -183,7 +182,6 @@ export function defineReactive (
       return value
     },
     set: function reactiveSetter (newVal) {
-      debugger
       /*先取默认值*/
       const value = getter ? getter.call(obj) : val
       /* eslint-disable no-self-compare */

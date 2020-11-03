@@ -89,11 +89,13 @@ function flushSchedulerQueue () {
   for (index = 0; index < queue.length; index++) {
     watcher = queue[index]
     if (watcher.before) {
+      /*beforeUpdate hook*/
       watcher.before()
     }
     id = watcher.id
     has[id] = null
     /*调用watcher run*/
+    /*开始更新 走patch方法*/
     watcher.run()
     // in dev build, check and stop circular updates.
     if (process.env.NODE_ENV !== 'production' && has[id] != null) {
