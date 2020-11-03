@@ -13,8 +13,11 @@
 <!--  <div v-else="">elseText</div>-->
 <!--  <div @click="()=>{testIf+=1}">changeTestIf</div>-->
 <!--  <div v-show="testShow">TESTSHOW</div>-->
-  <div @click="()=>{testShow=!testShow}">changeTestShow</div>
-    <div v-abc="testShow">TESTSHOW</div>
+  <!--<div @click="()=>{testShow=!testShow}">changeTestShow</div>-->
+  <div @click.once="testClick">changeTestShow</div>
+  <!--with 语句 牛P-->
+  <!--"_c('div',{on:{"click":testClick}},[_v("changeTestShow")])"-->
+<!--    <div v-abc="testShow">TESTSHOW</div>-->
   <!-- _c('div',{directives:[{name:"abc",rawName:"v-abc",value:(testShow),expression:"testShow"}]},[_v("TESTSHOW")]) -->
 
 <!--  <div v-for="el,$index in [1,2,3,4]">{{el}}</div>-->
@@ -42,12 +45,14 @@
     el: '#app',
     data :{
       testIf: true,
-      testShow: true
+      testShow: true,
+      test:2222
     },
     beforeUpdate(){
     },
     methods: {
       testClick () {
+        debugger
         this.test=123
       }
     }

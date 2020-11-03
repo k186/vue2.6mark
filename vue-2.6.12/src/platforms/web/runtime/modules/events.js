@@ -108,9 +108,15 @@ function updateDOMListeners (oldVnode: VNodeWithData, vnode: VNodeWithData) {
   }
   const on = vnode.data.on || {}
   const oldOn = oldVnode.data.on || {}
+  /*标记要绑定的dom*/
   target = vnode.elm
   normalizeEvents(on)
+  /*绑定事件
+  * core/vdom/helpers/update-listeners
+  * 真正的去绑定一个事件
+  * */
   updateListeners(on, oldOn, add, remove, createOnceHandler, vnode.context)
+  /*取消标记*/
   target = undefined
 }
 

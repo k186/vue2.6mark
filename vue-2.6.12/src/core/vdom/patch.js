@@ -136,7 +136,6 @@ export function createPatchFunction (backend) {
     ownerArray,
     index
   ) {
-    debugger
     if (isDef(vnode.elm) && isDef(ownerArray)) {
       // This vnode was used in a previous render!
       // now it's used as a new node, overwriting its elm would cause
@@ -152,7 +151,6 @@ export function createPatchFunction (backend) {
       return
     }
     /* 继续创建节点*/
-
     const data = vnode.data /*节点数据*/
     const children = vnode.children /*子节点*/
     const tag = vnode.tag /*节点名称*/
@@ -200,7 +198,6 @@ export function createPatchFunction (backend) {
       } else {
         /*向下创建 子节点*/
         createChildren(vnode, children, insertedVnodeQueue)
-        debugger
         if (isDef(data)) {
           /*调用 创建 patch 时 缓存的 vdom/modules/index 的hook */
           invokeCreateHooks(vnode, insertedVnodeQueue)
@@ -717,7 +714,6 @@ export function createPatchFunction (backend) {
 
   /*真正的patch 方法 这里又是 函数珂里*/
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
-    debugger
     if (isUndef(vnode)) {
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
       return

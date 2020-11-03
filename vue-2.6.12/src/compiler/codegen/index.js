@@ -113,10 +113,8 @@ export function genElement (el: ASTElement, state: CodegenState): string {
         * wrapData
         * wrapListeners
         * */
-        debugger
         data = genData(el, state)
       }
-
       //递归创建 child
       const children = el.inlineTemplate ? null : genChildren(el, state, true)
       code = `_c('${el.tag}'${
