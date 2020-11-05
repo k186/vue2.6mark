@@ -72,7 +72,7 @@ export function createPatchFunction (backend) {
   const cbs = {}
 
   const { modules, nodeOps } = backend
-  /* hooks 生命周期  对应生命周期绑定 modules 对应方法
+  /* hooks 生命周期 挂载Vnode 的hooks
   * 不同 runtime 的modules 有区别 web端是在 platforms/web/runtime/patch concat 上的
   * baseModules 来自 core/vdom/modules/index
   * baseModules 只包含 指令解析和 ref
