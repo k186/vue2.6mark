@@ -14,8 +14,10 @@ export function initProvide (vm: Component) {
 }
 
 export function initInjections (vm: Component) {
+  /*inject 引用是非响应的*/
   const result = resolveInject(vm.$options.inject, vm)
   if (result) {
+    /* inject 不注入__ob__ 属性*/
     toggleObserving(false)
     Object.keys(result).forEach(key => {
       /* istanbul ignore else */
@@ -32,6 +34,7 @@ export function initInjections (vm: Component) {
         defineReactive(vm, key, result[key])
       }
     })
+    /* 放开 注入__ob__ 属性*/
     toggleObserving(true)
   }
 }

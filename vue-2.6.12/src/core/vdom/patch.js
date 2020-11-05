@@ -146,7 +146,11 @@ export function createPatchFunction (backend) {
     }
 
     vnode.isRootInsert = !nested // for transition enter check
-    /*如果节点是 组件 直接创建完返回 */
+    /*如果节点是组件,这里会去创建组件，调用patch init hook -> 触发组件的$mount
+    * 创建组件时 vnode 的tag 是组件名
+    *
+    * */
+    debugger
     if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
       return
     }
@@ -155,6 +159,7 @@ export function createPatchFunction (backend) {
     const children = vnode.children /*子节点*/
     const tag = vnode.tag /*节点名称*/
     if (isDef(tag)) {
+      /*节点*/
       if (process.env.NODE_ENV !== 'production') {
         /*pre 节点*/
         if (data && data.pre) {
@@ -199,7 +204,7 @@ export function createPatchFunction (backend) {
         /*向下创建 子节点*/
         createChildren(vnode, children, insertedVnodeQueue)
         if (isDef(data)) {
-          /*调用 创建 patch 时 缓存的 vdom/modules/index 的hook */
+          /*调用 vdom 的 create  hook ;hooks 在顶部 */
           invokeCreateHooks(vnode, insertedVnodeQueue)
         }
       /*节点插入 组合*/
@@ -210,9 +215,11 @@ export function createPatchFunction (backend) {
         creatingElmInVPre--
       }
     } else if (isTrue(vnode.isComment)) {
+      /*创建注释*/
       vnode.elm = nodeOps.createComment(vnode.text)
       insert(parentElm, vnode.elm, refElm)
     } else {
+      /*创建 text*/
       vnode.elm = nodeOps.createTextNode(vnode.text)
       insert(parentElm, vnode.elm, refElm)
     }
@@ -223,6 +230,10 @@ export function createPatchFunction (backend) {
     if (isDef(i)) {
       const isReactivated = isDef(vnode.componentInstance) && i.keepAlive
       if (isDef(i = i.hook) && isDef(i = i.init)) {
+        /*
+        * 实际触发 组件hook 的init方法 触发子组件的$mount
+        * core/vdom/create-component G38
+        * */
         i(vnode, false /* hydrating */)
       }
       // after calling the init hook, if the vnode is a child component
@@ -718,10 +729,8 @@ export function createPatchFunction (backend) {
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
       return
     }
-
     let isInitialPatch = false
-    const insertedVnodeQueue = []
-
+    const insertedVnodeQueue = []/*插入了的子组件队列*/
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
       isInitialPatch = true
@@ -774,7 +783,7 @@ export function createPatchFunction (backend) {
         *   index
         * */
         /*
-        * 这里面会去创建el 同时会处理指令 module等相关的绑定关系
+        * 这里面会去创建el，并且插入到vnode.parent ； 同时会处理指令 module等相关的绑定关系
         * */
         createElm(
           vnode,
@@ -825,7 +834,7 @@ export function createPatchFunction (backend) {
       }
     }
 
-    /*触发 insert hook */
+    /*触发 insert hook  参考顶部 hooks */
     invokeInsertHook(vnode, insertedVnodeQueue, isInitialPatch)
     return vnode.elm
   }

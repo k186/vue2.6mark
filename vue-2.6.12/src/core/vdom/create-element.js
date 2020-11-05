@@ -93,9 +93,12 @@ export function _createElement (
     children = simpleNormalizeChildren(children)
   }
   let vnode, ns
+  /*tag 字符串*/
+
   if (typeof tag === 'string') {
     let Ctor
     ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)
+    /*如果标签可被接受的普通dom标签*/
     if (config.isReservedTag(tag)) {
       /*创建普通节点*/
       // platform built-in elements
@@ -111,6 +114,11 @@ export function _createElement (
         undefined, undefined, context
       )
     } else if ((!data || !data.pre) && isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
+      /*标签名存在当前配置的components内*/
+      /*创建组件Vnode 这里会有些差异
+      * data 为props
+      * Ctor 为配置
+      * */
       // component
       vnode = createComponent(Ctor, data, context, children, tag)
     } else {

@@ -7,24 +7,24 @@
 </head>
 <body>
 <!--sadf-->
-<div id="app" >
-<!--  <div v-if="testIf==1">ifText</div>-->
-<!--  <div v-else-if="testIf==2">elseIfText</div>-->
-<!--  <div v-else="">elseText</div>-->
-<!--  <div @click="()=>{testIf+=1}">changeTestIf</div>-->
-<!--  <div v-show="testShow">TESTSHOW</div>-->
+<div id="app">
+  <!--  <div v-if="testIf==1">ifText</div>-->
+  <!--  <div v-else-if="testIf==2">elseIfText</div>-->
+  <!--  <div v-else="">elseText</div>-->
+  <!--  <div @click="()=>{testIf+=1}">changeTestIf</div>-->
+  <!--  <div v-show="testShow">TESTSHOW</div>-->
   <!--<div @click="()=>{testShow=!testShow}">changeTestShow</div>-->
   <!--<div @click.once="testClick">changeTestShow</div>-->
-  <div>{{test|abc|abc1}}</div>
+  <tt :passby="test"></tt>
   <!--with 语句 牛P-->
   <!--"_c('div',{on:{"click":testClick}},[_v("changeTestShow")])"-->
-<!--    <div v-abc="testShow">TESTSHOW</div>-->
+  <!--    <div v-abc="testShow">TESTSHOW</div>-->
   <!-- _c('div',{directives:[{name:"abc",rawName:"v-abc",value:(testShow),expression:"testShow"}]},[_v("TESTSHOW")]) -->
 
-<!--  <div v-for="el,$index in [1,2,3,4]">{{el}}</div>-->
+  <!--  <div v-for="el,$index in [1,2,3,4]">{{el}}</div>-->
 </div>
 <script>
-  Vue.directive('abc',{
+  Vue.directive('abc', {
     bind: function () {
       console.log(1)
     },
@@ -44,27 +44,70 @@
 
   new Vue({
     el: '#app',
-    filters:{
-      'abc':(abc)=>{
-        console.log(111)
-        return 111
-      },
-      'abc1':(abc)=>{
-        console.log(222)
-        return 22
+    /* filters:{
+       'abc':(abc)=>{
+         console.log(111)
+         return 111
+       },
+       'abc1':(abc)=>{
+         console.log(222)
+         return 22
+       }
+     },*/
+    components: {
+      'tt': {
+        name: 'tt',
+        props: {
+          passby: Number
+        },
+        template: '<div class="tt">{{tts}}</div>',
+        data () {
+          return {
+            tts: 'this is tt data'
+          }
+        },
+        created () {
+          console.log('tt create')
+        },
+        beforeMount () {
+          console.log('tt before mount')
+        },
+        mounted () {
+          console.log('tt mounted')
+        },
+        beforeUpdate () {
+          console.log('tt beforeupdate')
+        },
+        update () {
+          console.log('tt update')
+        }
       }
     },
-    data :{
+    data: {
       testIf: true,
       testShow: true,
-      test:2222
+      test: 2222
     },
-    beforeUpdate(){
+
+    created () {
+      console.log(' create')
+    },
+    beforeMount () {
+      console.log(' before mount')
+    },
+    mounted () {
+      console.log(' mounted')
+    },
+    beforeUpdate () {
+      console.log(' beforeupdate')
+    },
+    update () {
+      console.log(' update')
     },
     methods: {
       testClick () {
         debugger
-        this.test=123
+        this.test = 123
       }
     }
   })

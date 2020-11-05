@@ -819,9 +819,11 @@ function processAttrs (el) {
       if (bindRE.test(name)) {// v-bind
         //获取v-bind\:data 这种表达式  名称
         name = name.replace(bindRE, '')
-        //值
-        debugger
-
+        /*
+        * 值 这里会连同处理filter 表达式
+        * 如果是filter 直接返回 filter的code
+        * _f("abc1")(_f("abc")(test))
+        * */
         value = parseFilters(value)
         //是否是动态值
         isDynamic = dynamicArgRE.test(name)
@@ -892,7 +894,7 @@ function processAttrs (el) {
           /*props*/
           addProp(el, name, value, list[i], isDynamic)
         } else {
-          /*静态 没有表达修饰符 直接添加为attr*/
+          /*没有表达修饰符 直接添加为attr*/
           addAttr(el, name, value, list[i], isDynamic)
         }
       } else if (onRE.test(name)) { // v-on
@@ -931,7 +933,7 @@ function processAttrs (el) {
       }
     } else {
       // literal attribute
-      /*字面属性 */
+      /*字面属性 纯静态 直接渲染 */
       if (process.env.NODE_ENV !== 'production') {
         const res = parseText(value, delimiters)
         if (res) {

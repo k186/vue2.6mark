@@ -33,6 +33,7 @@ import {
 } from 'weex/runtime/recycle-list/render-component-template'
 
 // inline hooks to be invoked on component VNodes during patch
+/*组件类型的Vnode 才有如下 生命周期*/
 const componentVNodeHooks = {
   init (vnode: VNodeWithData, hydrating: boolean): ?boolean {
     if (
@@ -44,10 +45,17 @@ const componentVNodeHooks = {
       const mountedNode: any = vnode // work around flow
       componentVNodeHooks.prepatch(mountedNode, mountedNode)
     } else {
+      /*create hook*/
+      /*
+      * Vue 内部实现组件是
+      * new 一个组件
+      * 再次触发Vue.extend 方法里面的_init 方法
+      * */
       const child = vnode.componentInstance = createComponentInstanceForVnode(
         vnode,
         activeInstance
       )
+      /*子组件 $mount*/
       child.$mount(hydrating ? vnode.elm : undefined, hydrating)
     }
   },
@@ -108,11 +116,12 @@ export function createComponent (
   if (isUndef(Ctor)) {
     return
   }
-
+  /*Vue */
   const baseCtor = context.$options._base
 
   // plain options object: turn it into a constructor
   if (isObject(Ctor)) {
+    /*创建当前组件构造器,*/
     Ctor = baseCtor.extend(Ctor)
   }
 
@@ -127,6 +136,9 @@ export function createComponent (
 
   // async component
   let asyncFactory
+  /*
+  * 加载异步组件
+  * */
   if (isUndef(Ctor.cid)) {
     asyncFactory = Ctor
     Ctor = resolveAsyncComponent(asyncFactory, baseCtor)
@@ -143,11 +155,14 @@ export function createComponent (
       )
     }
   }
-
   data = data || {}
 
   // resolve constructor options in case global mixins are applied after
   // component constructor creation
+  /*
+  * 解析构造函数选项，以防在创建组件构造函数后应用全局mixin
+  * 和init 类似
+  * */
   resolveConstructorOptions(Ctor)
 
   // transform component v-model data into props & events
@@ -159,6 +174,9 @@ export function createComponent (
   const propsData = extractPropsFromVNodeData(data, Ctor, tag)
 
   // functional component
+  /*函数化组件
+  * https://cn.vuejs.org/v2/guide/render-function.html#%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BB%84%E4%BB%B6
+  * */
   if (isTrue(Ctor.options.functional)) {
     return createFunctionalComponent(Ctor, propsData, data, context, children)
   }
@@ -183,6 +201,9 @@ export function createComponent (
   }
 
   // install component management hooks onto the placeholder node
+  /*
+  * 安装 组件钩子函数
+  * */
   installComponentHooks(data)
 
   // return a placeholder vnode
@@ -229,6 +250,9 @@ function installComponentHooks (data: VNodeData) {
     const key = hooksToMerge[i]
     const existing = hooks[key]
     const toMerge = componentVNodeHooks[key]
+    /*
+    * 组件Vnode 钩子函数 componentVNodeHooks
+    * */
     if (existing !== toMerge && !(existing && existing._merged)) {
       hooks[key] = existing ? mergeHook(toMerge, existing) : toMerge
     }

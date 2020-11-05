@@ -3,7 +3,6 @@
 import { extend } from 'shared/util'
 import { detectErrors } from './error-detector'
 import { createCompileToFunctionFn } from './to-function'
-import { debug } from "webpack";
 
 /*柯里化函数*/
 export function createCompilerCreator (baseCompile: Function): Function {

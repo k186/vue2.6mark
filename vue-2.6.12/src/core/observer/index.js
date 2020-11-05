@@ -53,6 +53,7 @@ export class Observer {
       } else {
         copyAugment(value, arrayMethods, arrayKeys)
       }
+      /*处理数组*/
       this.observeArray(value)
     } else {
       /*正常处理对象*/
@@ -160,7 +161,6 @@ export function defineReactive (
   if ((!getter || setter) && arguments.length === 2) {
     val = obj[key]
   }
-
   let childOb = !shallow && observe(val)
   Object.defineProperty(obj, key, {
     enumerable: true,

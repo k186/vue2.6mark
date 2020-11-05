@@ -168,7 +168,6 @@ export function mountComponent (
     }
   }
   callHook(vm, 'beforeMount')
-
   let updateComponent
 
   /* istanbul ignore if */
@@ -194,8 +193,10 @@ export function mountComponent (
     /*这个方法是 watcher的getter*/
     updateComponent = () => {
       /*被 observer/watcher/get()触发首次渲染
-      * _update 方法在 core/instance/index lifecycleMixin 中注入
+      * _update 方法在 core/instance/index lifecycleMixin 中注入 是 runtime 没有new之前就有了
+      * _render instance/render renderMixin 中注入 在_update 注入之后
       * _render() 返回的是Vnode
+      *
       * */
       vm._update(vm._render(), hydrating)
     }
@@ -204,7 +205,7 @@ export function mountComponent (
   // we set this to vm._watcher inside the watcher's constructor
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
- /* 监听当前 component； mix beforeUpdate方法 ;这个water 用于$watch 还有 指令*/
+ /* 监听当前 component； mix beforeUpdate方法 ;*/
 
   new Watcher(vm, updateComponent, noop, {
     before () {

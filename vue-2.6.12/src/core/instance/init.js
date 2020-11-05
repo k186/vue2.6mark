@@ -41,7 +41,7 @@ export function initMixin (Vue: Class<Component>) {
     } else {
       /*merge 准备 当前$options,
       *
-      *这里如果options 里面有components 如何处理？？*/
+      **/
       vm.$options = mergeOptions(
         resolveConstructorOptions(vm.constructor),/*parent*/
         options || {},/*child*/
@@ -62,7 +62,7 @@ export function initMixin (Vue: Class<Component>) {
     initRender(vm)
     /*调用 beforeCreate*/
     callHook(vm, 'beforeCreate')
-    /*注入 响应式 方法*/
+    /*处理inject */
     initInjections(vm) // resolve injections before data/props
 
     /*初始化状态 标准配置项 ，初始化 props  methods data computed watch */

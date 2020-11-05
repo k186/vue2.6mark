@@ -156,7 +156,7 @@ function initData (vm: Component) {
       proxy(vm, `_data`, key)
     }
   }
-  /*设置观察数据，并且作为根数据*/
+  /*设置data __ob__属性并且标记为一个vm*/
   // observe data
   observe(data, true /* asRootData */)
 }

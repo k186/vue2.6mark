@@ -69,7 +69,6 @@ if (inBrowser && !isIE) {
  * Flush both queues and run the watchers.
  */
 function flushSchedulerQueue () {
-  debugger
   currentFlushTimestamp = getNow()
   flushing = true
   let watcher, id
@@ -119,6 +118,7 @@ function flushSchedulerQueue () {
   const updatedQueue = queue.slice()
 
   resetSchedulerState()
+
 
   // call component updated and activated hooks
   callActivatedHooks(activatedQueue)

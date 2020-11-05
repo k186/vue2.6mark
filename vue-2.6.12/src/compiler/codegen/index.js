@@ -47,6 +47,10 @@ export function generate (
   /*state 包含 默认 全局 directives [bind cloak html model on text ]*/
   const state = new CodegenState(options)
   /* _c -> createElement 方法 ；在 core/instance render initRender 时候初始化定义*/
+  /*
+  * 如果是一个组件节点 ast 语法只会存在当前 组件tag
+  * */
+  debugger
   const code = ast ? genElement(ast, state) : '_c("div")'
   /* with 语句的作用*/
   /*
