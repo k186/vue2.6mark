@@ -381,7 +381,7 @@ export function parse (
         let res
         let child: ?ASTNode
         /* 如果有filter 在这里解析 code 在expression里面 */
-        debugger
+        console.info('filter')
         if (!inVPre && text !== ' ' && (res = parseText(text, delimiters))) {
           child = {
             type: 2,
@@ -825,6 +825,7 @@ function processAttrs (el) {
         * 如果是filter 直接返回 filter的code
         * _f("abc1")(_f("abc")(test))
         * */
+        debugger
         value = parseFilters(value)
         //是否是动态值
         isDynamic = dynamicArgRE.test(name)
@@ -936,6 +937,8 @@ function processAttrs (el) {
       // literal attribute
       /*字面属性 纯静态 直接渲染 */
       if (process.env.NODE_ENV !== 'production') {
+        /* 如果有filter 在这里解析 code 在expression里面 */
+        console.info('filter')
         const res = parseText(value, delimiters)
         if (res) {
           warn(
