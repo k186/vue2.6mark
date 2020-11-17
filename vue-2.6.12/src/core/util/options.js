@@ -453,6 +453,8 @@ export function resolveAsset (
   if (typeof id !== 'string') {
     return
   }
+  /*filter this 指向 */
+  debugger
   const assets = options[type]
   // check local registration variations first
   if (hasOwn(assets, id)) return assets[id]

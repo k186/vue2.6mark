@@ -53,6 +53,7 @@ function _update (oldVnode, vnode) {
       dir.oldArg = oldDir.arg
       /*指令 update 调用*/
       callHook(dir, 'update', vnode, oldVnode)
+      /*指令有componentUpdated 才压栈 等待子节点更新完触发*/
       if (dir.def && dir.def.componentUpdated) {
         dirsWithPostpatch.push(dir)
       }

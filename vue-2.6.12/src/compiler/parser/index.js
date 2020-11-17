@@ -222,7 +222,6 @@ export function parse (
     shouldKeepComment: options.comments,
     outputSourceRange: options.outputSourceRange,
     start (tag, attrs, unary, start, end) {
-      debugger
       // check namespace.
       // inherit parent ns if there is one
       const ns = (currentParent && currentParent.ns) || platformGetTagNamespace(tag)
@@ -320,7 +319,6 @@ export function parse (
     },
 
     end (tag, start, end) {
-      debugger
       const element = stack[stack.length - 1]
       // pop stack
       stack.length -= 1
@@ -382,7 +380,8 @@ export function parse (
         }
         let res
         let child: ?ASTNode
-                                               /* 如果有filter 在这里解析 code 在expression里面 */
+        /* 如果有filter 在这里解析 code 在expression里面 */
+        debugger
         if (!inVPre && text !== ' ' && (res = parseText(text, delimiters))) {
           child = {
             type: 2,
@@ -457,7 +456,6 @@ export function processElement (
   element: ASTElement,
   options: CompilerOptions
 ) {
-  debugger
   /*加key*/
   processKey(element)
 

@@ -269,7 +269,6 @@ export function parseHTML (html, options) {
       /*标记上一次处理的tag名*/
       lastTag = tagName
     }
-    debugger
     if (options.start) {
       /*当前解析开始tga处理结束，回调start*/
       options.start(tagName, attrs, unary, match.start, match.end)

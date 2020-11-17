@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="../dist/vue.js"></script>
+</head>
+<body>
+<div id="app">
+  <div v-ca="msg">
+    xxxxx
+  </div>
+  <input type="text" v-model="msg"/>
+</div>
+
+</body>
+<script>
+  new Vue( {
+    directives: {
+      ca: {
+        bind(){
+          console.log('dir bind')
+        },
+        inserted(){
+          console.log('dir  dom inserted')
+        },
+        update(){
+          console.log('dir vnode update')
+        },
+        componentUpdated(){
+          console.log('dir component updated')
+        },
+        unbind(){
+          console.log('dir destroy')
+        }
+      }
+    },
+    data () {
+      return {
+        msg: 'dir msessage'
+      }
+    }
+  } ).$mount( '#app' )
+</script>
+</html>

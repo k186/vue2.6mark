@@ -72,6 +72,7 @@ export function createPatchFunction (backend) {
   const cbs = {}
 
   const { modules, nodeOps } = backend
+  debugger
   /* hooks 生命周期 挂载Vnode 的hooks
   * 不同 runtime 的modules 有区别 web端是在 platforms/web/runtime/patch concat 上的
   * baseModules 来自 core/vdom/modules/index
@@ -204,7 +205,7 @@ export function createPatchFunction (backend) {
         /*向下创建 子节点*/
         createChildren(vnode, children, insertedVnodeQueue)
         if (isDef(data)) {
-          /*调用 vdom 的 create  hook ;hooks 在顶部 */
+          /*调用 module、directives hook ;hooks 在顶部 */
           invokeCreateHooks(vnode, insertedVnodeQueue)
         }
       /*节点插入 组合*/
@@ -328,6 +329,7 @@ export function createPatchFunction (backend) {
     * activate create destroy remove update
     *
     * */
+    debugger
     for (let i = 0; i < cbs.create.length; ++i) {
       cbs.create[i](emptyNode, vnode)
     }
@@ -782,6 +784,7 @@ export function createPatchFunction (backend) {
         *   ownerArray,
         *   index
         * */
+        debugger
         /*
         * 这里面会去创建el，并且插入到vnode.parent ； 同时会处理指令 module等相关的绑定关系
         * */

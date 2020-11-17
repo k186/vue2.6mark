@@ -1,10 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="../dist/vue.js"></script>
 </head>
 <body>
+<div id="app">
+  <div v-if="msg==1"> 第一条件</div>
+  <div v-else-if="msg==2"> 第二条件</div>
+  <div v-else> 都没有</div>
+  <input type="text" v-model="msg"/>
+</div>
+
+<!-- (msg==1)?_c('div',[_v(" 第一条件")]):(msg==2)?_c('div',[_v(" 第二条件")]):_c('div',[_v(" 都没有")]) -->
 
 </body>
+<script>
+  new Vue( {
+    data () {
+      return {
+        msg: '1'
+      }
+    },
+    methods: {}
+
+  } ).$mount( '#app' )
+</script>
 </html>

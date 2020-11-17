@@ -67,6 +67,8 @@ export function lifecycleMixin (Vue: Class<Component>) {
     if (!prevVnode) {
       // initial render
       /*首次渲染*/
+      /* web runtime injected in runtime/index.js*/
+      debugger
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
     } else {
       // updates
@@ -198,6 +200,7 @@ export function mountComponent (
       * _render() 返回的是Vnode
       *
       * */
+      debugger
       vm._update(vm._render(), hydrating)
     }
   }

@@ -1,10 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="../dist/vue.js"></script>
 </head>
 <body>
+<div id="app">
+  <div> {{msg|filterA|GF}}</div>
+  <input type="text" v-model="msg"/>
+</div>
 
 </body>
+<script>
+  // var a = {
+  //   b: {
+  //     c: function () {
+  //       console.log( this )
+  //     }
+  //   }
+  // }
+  // a.b.c();
+  // var f=a.b.c;
+  // f()
+  /*filter this 指向问题 实际拿的 proxy 的$options属性 往上查 就是window*/
+  Vue.filter( 'GF', function ( val ) {
+    return `${val} --`
+  } )
+
+  new Vue( {
+    filters: {
+      filterA ( val ) {
+        // this 指向问题
+        return `${val} pix`
+      }
+    },
+    data () {
+      return {
+        msg: '1'
+      }
+    },
+    methods: {
+      abc () {
+        console.log( this )
+      }
+    }
+
+  } ).$mount( '#app' )
+</script>
 </html>
