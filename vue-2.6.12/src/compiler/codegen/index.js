@@ -70,6 +70,7 @@ export function genElement (el: ASTElement, state: CodegenState): string {
   if (el.parent) {
     el.pre = el.pre || el.parent.pre
   }
+  debugger
   /*根据语法标记 生成对应的渲染code*/
   if (el.staticRoot && !el.staticProcessed) {
     /*标记 v-pre节点 */

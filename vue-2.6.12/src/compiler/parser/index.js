@@ -20,7 +20,6 @@ import {
   pluckModuleFunction,
   getAndRemoveAttrByRegex
 } from '../helpers'
-import { debug } from "webpack";
 
 export const onRE = /^@|^v-on:/
 export const dirRE = process.env.VBIND_PROP_SHORTHAND
@@ -223,6 +222,7 @@ export function parse (
     shouldKeepComment: options.comments,
     outputSourceRange: options.outputSourceRange,
     start (tag, attrs, unary, start, end) {
+      debugger
       // check namespace.
       // inherit parent ns if there is one
       const ns = (currentParent && currentParent.ns) || platformGetTagNamespace(tag)
@@ -320,6 +320,7 @@ export function parse (
     },
 
     end (tag, start, end) {
+      debugger
       const element = stack[stack.length - 1]
       // pop stack
       stack.length -= 1
@@ -456,6 +457,7 @@ export function processElement (
   element: ASTElement,
   options: CompilerOptions
 ) {
+  debugger
   /*加key*/
   processKey(element)
 
@@ -797,6 +799,7 @@ function processComponent (el) {
 }
 
 function processAttrs (el) {
+  debugger
   const list = el.attrsList
   let i, l, name, rawName, value, modifiers, syncGen, isDynamic
   for (i = 0, l = list.length; i < l; i++) {

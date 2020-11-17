@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="../dist/vue.js"></script>
+</head>
+<body>
+<div id="app">
+  <div v-show="toggleShow">
+    v-show 展示内容
+  </div>
+  <div class="btn" @click="toggleEvt">点击切换展示</div>
+</div>
+
+</body>
+<script>
+  new Vue({
+    data () {
+      return {
+        toggleShow: true
+      }
+    },
+    methods: {
+      toggleEvt () {
+        this.toggleShow = !this.toggleShow
+      }
+    }
+
+  }).$mount('#app')
+</script>
+</html>
